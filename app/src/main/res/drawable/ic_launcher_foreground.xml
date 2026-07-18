@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Bold Academic Crest Shield in ClgMate Varsity Gold -->
+    <path
+        android:fillColor="#EAB308"
+        android:pathData="M34,24 h40 v22 c0,15 -20,28 -20,28 c0,0 -20,-13 -20,-28 Z" />
+
+    <!-- High-Contrast Inner Slate Core -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M38,28 h32 v18 c0,12 -16,22 -16,22 c0,0 -16,-10 -16,-22 Z" />
+
+    <!-- Custom Campus Gate Silhouette inside the Shield (Pure White) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,48 v-8 c0,-4.4 3.6,-8 8,-8 s8,3.6 8,8 v8 h-2 v-8 c0,-3.3 -2.7,-6 -6,-6 s-6,2.7 -6,6 v8 Z" />
+
+    <!-- Gate Pillars Base -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,48 h4 v2 h-4 Z M58,48 h4 v2 h-4 Z" />
+
+    <!-- Center Scholastic Star of Excellence -->
+    <path
+        android:fillColor="#EAB308"
+        android:pathData="M52,38 l1.5,3 l3,1.5 l-3,1.5 l-1.5,3 l-1.5,-3 l-3,-1.5 l3,-1.5 Z" />
+
+</vector>
