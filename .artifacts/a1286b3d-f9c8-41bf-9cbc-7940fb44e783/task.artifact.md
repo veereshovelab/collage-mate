@@ -1,0 +1,5 @@
+- [x] Create `clgmate_logo.xml` vector drawable
+- [x] Update `ic_launcher.xml` to use the new logo
+- [x] Update `ic_launcher_round.xml` to use the new logo
+- [x] Update `AndroidManifest.xml` to use mipmap launcher icons
+- [x] Verify build via `:app:processDebugResources`

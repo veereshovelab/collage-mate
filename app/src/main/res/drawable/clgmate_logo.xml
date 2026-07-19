@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Stylized "C" Shape with Gradient -->
+    <path
+        android:pathData="M78,54 A24,24 0 1 1 54,30 L54,42 A12,12 0 1 0 66,54 L78,54"
+        android:strokeWidth="1">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="30"
+                android:startY="30"
+                android:endX="78"
+                android:endY="78"
+                android:type="linear">
+                <item android:color="#38BDF8" android:offset="0.0" />
+                <item android:color="#0EA5E9" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Graduation Cap Icon centered in the C -->
+    <!-- Mortarboard Top -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,44 L68,50 L54,56 L40,50 Z" />
+
+    <!-- Cap Base -->
+    <path
+        android:fillColor="#E2E8F0"
+        android:pathData="M46,53 L46,57 C46,57 49,59 54,59 C59,59 62,57 62,57 L62,53 L54,56 Z" />
+
+    <!-- Tassel -->
+    <path
+        android:fillColor="#FCD34D"
+        android:pathData="M68,50 L68,58 L66,58 L66,50 Z" />
+
+</vector>
