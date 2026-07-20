@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -40,6 +41,8 @@ import com.example.ui.screens.LoginScreen
 import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.EditProfileScreen
 import com.example.ui.screens.AssignmentScreen
+import com.example.ui.screens.CollegeSearchScreen
+import com.example.ui.screens.CollegeHubScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.theme.BentoBackground
 import com.example.ui.theme.BentoNavBg
@@ -64,7 +67,7 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class CampusTab {
-  FEED, ASSIGNMENTS, MARKETPLACE, GIGS, PROFILE
+  FEED, ASSIGNMENTS, MARKETPLACE, EXPLORE, GIGS, PROFILE
 }
 
 @Composable
@@ -72,6 +75,7 @@ fun MainAppContent(viewModel: CampusViewModel) {
   val currentUser by viewModel.currentUser.collectAsState()
   var currentTab by remember { mutableStateOf(CampusTab.FEED) }
   var isEditingProfile by remember { mutableStateOf(false) }
+  var selectedCollegeForHub by remember { mutableStateOf<String?>(null) }
 
   if (currentUser == null) {
     LoginScreen(viewModel = viewModel)
@@ -127,6 +131,20 @@ fun MainAppContent(viewModel: CampusViewModel) {
             modifier = Modifier.testTag("tab_marketplace")
           )
           NavigationBarItem(
+            selected = currentTab == CampusTab.EXPLORE,
+            onClick = { currentTab = CampusTab.EXPLORE },
+            icon = { Icon(Icons.Default.School, contentDescription = "Explore Colleges") },
+            label = { Text("Explore", fontWeight = if (currentTab == CampusTab.EXPLORE) FontWeight.Bold else FontWeight.Medium) },
+            colors = NavigationBarItemDefaults.colors(
+              selectedIconColor = BentoLilacContent,
+              selectedTextColor = BentoLilacContent,
+              unselectedIconColor = BentoTextSecondary,
+              unselectedTextColor = BentoTextSecondary,
+              indicatorColor = BentoLilacContainer
+            ),
+            modifier = Modifier.testTag("tab_explore")
+          )
+          NavigationBarItem(
             selected = currentTab == CampusTab.GIGS,
             onClick = { currentTab = CampusTab.GIGS },
             icon = { Icon(Icons.Default.Handshake, contentDescription = "Gig Board") },
@@ -173,6 +191,22 @@ fun MainAppContent(viewModel: CampusViewModel) {
           )
           CampusTab.ASSIGNMENTS -> AssignmentScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
+          CampusTab.EXPLORE -> {
+            if (selectedCollegeForHub != null) {
+              CollegeHubScreen(
+                viewModel = viewModel,
+                collegeName = selectedCollegeForHub!!,
+                onBack = { selectedCollegeForHub = null },
+                modifier = modifier
+              )
+            } else {
+              CollegeSearchScreen(
+                viewModel = viewModel,
+                onCollegeSelect = { selectedCollegeForHub = it },
+                modifier = modifier
+              )
+            }
+          }
           CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.PROFILE -> {
             if (isEditingProfile) {

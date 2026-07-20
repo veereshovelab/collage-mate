@@ -30,6 +30,7 @@ data class ResourceMaterial(
     val fileType: String, // PDF, Study Guide, Exam Prep
     val uploaderEmail: String,
     val uploaderName: String,
+    val collegeName: String,
     val priceInPoints: Int,
     val timestamp: Long = System.currentTimeMillis()
 )

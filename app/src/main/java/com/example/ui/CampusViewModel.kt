@@ -49,6 +49,15 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
     private val _isRegistering = MutableStateFlow(false)
     val isRegistering: StateFlow<Boolean> = _isRegistering.asStateFlow()
 
+    private val _collegeNames = MutableStateFlow<List<String>>(emptyList())
+    val collegeNames: StateFlow<List<String>> = _collegeNames.asStateFlow()
+
+    private val _collegeSearchQuery = MutableStateFlow("")
+    val collegeSearchQuery: StateFlow<String> = _collegeSearchQuery.asStateFlow()
+
+    private val _selectedCollegeResources = MutableStateFlow<List<ResourceMaterial>>(emptyList())
+    val selectedCollegeResources: StateFlow<List<ResourceMaterial>> = _selectedCollegeResources.asStateFlow()
+
     init {
         // Observe search query and update resources dynamically
         viewModelScope.launch {
@@ -56,6 +65,13 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                 repository.searchResources(query).collect { list ->
                     _resources.value = list
                 }
+            }
+        }
+
+        // Observe college list
+        viewModelScope.launch {
+            repository.getUniqueColleges().collect { list ->
+                _collegeNames.value = list
             }
         }
 
@@ -97,6 +113,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     fileType = "PDF Study Guide",
                     uploaderEmail = "alice.adams@stateu.edu",
                     uploaderName = "Alice Adams",
+                    collegeName = "State University",
                     priceInPoints = 15
                 )
             )
@@ -111,6 +128,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     fileType = "PDF Lecture Notes",
                     uploaderEmail = "bob.baker@stateu.edu",
                     uploaderName = "Bob Baker",
+                    collegeName = "State University",
                     priceInPoints = 25
                 )
             )
@@ -125,6 +143,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     fileType = "Cheat Sheet",
                     uploaderEmail = "charlie.chen@stateu.edu",
                     uploaderName = "Charlie Chen",
+                    collegeName = "State University",
                     priceInPoints = 10
                 )
             )
@@ -203,6 +222,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     fileType = "Assignment",
                     uploaderEmail = "alice.adams@stateu.edu",
                     uploaderName = "Alice Adams",
+                    collegeName = "State University",
                     priceInPoints = 20
                 )
             )
@@ -217,6 +237,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     fileType = "Assignment",
                     uploaderEmail = "charlie.chen@stateu.edu",
                     uploaderName = "Charlie Chen",
+                    collegeName = "State University",
                     priceInPoints = 15
                 )
             )
@@ -319,6 +340,18 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
         _searchQuery.value = query
     }
 
+    fun setCollegeSearchQuery(query: String) {
+        _collegeSearchQuery.value = query
+    }
+
+    fun selectCollege(collegeName: String) {
+        viewModelScope.launch {
+            repository.getResourcesByCollege(collegeName).collect { list ->
+                _selectedCollegeResources.value = list
+            }
+        }
+    }
+
     fun addResource(title: String, courseCode: String, professor: String, semester: String, description: String, fileType: String, priceInPoints: Int) {
         val user = _currentUser.value ?: return
         viewModelScope.launch {
@@ -331,6 +364,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                 fileType = fileType,
                 uploaderEmail = user.email,
                 uploaderName = user.name,
+                collegeName = user.collegeName,
                 priceInPoints = priceInPoints
             )
             repository.insertResource(material)
