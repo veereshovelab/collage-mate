@@ -38,6 +38,7 @@ import com.example.ui.screens.MarketplaceScreen
 import com.example.ui.screens.GigScreen
 import com.example.ui.screens.LoginScreen
 import com.example.ui.screens.ProfileScreen
+import com.example.ui.screens.EditProfileScreen
 import com.example.ui.screens.AssignmentScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.theme.BentoBackground
@@ -70,6 +71,7 @@ enum class CampusTab {
 fun MainAppContent(viewModel: CampusViewModel) {
   val currentUser by viewModel.currentUser.collectAsState()
   var currentTab by remember { mutableStateOf(CampusTab.FEED) }
+  var isEditingProfile by remember { mutableStateOf(false) }
 
   if (currentUser == null) {
     LoginScreen(viewModel = viewModel)
@@ -172,7 +174,21 @@ fun MainAppContent(viewModel: CampusViewModel) {
           CampusTab.ASSIGNMENTS -> AssignmentScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
-          CampusTab.PROFILE -> ProfileScreen(viewModel = viewModel, modifier = modifier)
+          CampusTab.PROFILE -> {
+            if (isEditingProfile) {
+              EditProfileScreen(
+                viewModel = viewModel,
+                onBack = { isEditingProfile = false },
+                modifier = modifier
+              )
+            } else {
+              ProfileScreen(
+                viewModel = viewModel,
+                onEditClick = { isEditingProfile = true },
+                modifier = modifier
+              )
+            }
+          }
         }
       }
     }
