@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,25 +20,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Badge
-import androidx.compose.material.icons.filled.HelpOutline
-import androidx.compose.material.icons.filled.Logout
-import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.TaskAlt
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,11 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.ui.CampusViewModel
 import com.example.ui.theme.*
 
@@ -59,7 +49,8 @@ import com.example.ui.theme.*
 @Composable
 fun ProfileScreen(
     viewModel: CampusViewModel,
-    modifier: Modifier = Modifier
+    onEditClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val user by viewModel.currentUser.collectAsState()
@@ -74,13 +65,21 @@ fun ProfileScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Student Profile",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold, letterSpacing = (-0.5).sp),
-                        color = BentoTextMain
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Student Profile",
+                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold, letterSpacing = (-0.5).sp),
+                            color = BentoTextMain
+                        )
+                    }
                 },
                 actions = {
+                    IconButton(
+                        onClick = onEditClick,
+                        modifier = Modifier.testTag("edit_profile_button")
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = "Edit Profile", tint = BentoTextSecondary)
+                    }
                     IconButton(
                         onClick = {
                             viewModel.logout()
@@ -88,7 +87,7 @@ fun ProfileScreen(
                         },
                         modifier = Modifier.testTag("logout_button")
                     ) {
-                        Icon(Icons.Default.Logout, contentDescription = "Logout", tint = Color(0xFFEF4444))
+                        Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = "Logout", tint = Color(0xFFEF4444))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -122,20 +121,29 @@ fun ProfileScreen(
                         .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Profile initials large avatar with lavender background
+                    // Profile initials large avatar or image
                     Box(
                         modifier = Modifier
-                            .size(76.dp)
+                            .size(86.dp)
                             .clip(CircleShape)
                             .background(BentoLavenderContainer)
                             .border(1.dp, BentoBorder.copy(alpha = 0.5f), CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = user?.name?.firstOrNull()?.toString()?.uppercase() ?: "?",
-                            color = BentoLavenderContent,
-                            style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold)
-                        )
+                        if (user?.profilePictureUri != null) {
+                            AsyncImage(
+                                model = user?.profilePictureUri,
+                                contentDescription = "Profile Picture",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Text(
+                                text = user?.name?.firstOrNull()?.toString()?.uppercase() ?: "?",
+                                color = BentoLavenderContent,
+                                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.ExtraBold)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -146,12 +154,28 @@ fun ProfileScreen(
                         color = BentoTextMain
                     )
 
+                    val subtitle = if (user?.collegeCourse?.isNotBlank() == true) {
+                        "${user?.collegeCourse} • ${user?.collegeName}"
+                    } else {
+                        "${user?.major} • ${user?.collegeName}"
+                    }
+
                     Text(
-                        text = "${user?.major} • ${user?.collegeName}",
+                        text = subtitle,
                         style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                         color = BentoTextSecondary,
                         modifier = Modifier.padding(top = 4.dp)
                     )
+
+                    if (user?.bio?.isNotBlank() == true) {
+                        Text(
+                            text = user?.bio ?: "",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = BentoTextMain,
+                            modifier = Modifier.padding(top = 12.dp, start = 16.dp, end = 16.dp),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(18.dp))
 
@@ -170,7 +194,7 @@ fun ProfileScreen(
                                 .background(BentoBorder.copy(alpha = 0.8f))
                         )
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Institutional Email", style = MaterialTheme.typography.bodySmall, color = BentoTextSecondary)
+                            Text("Email", style = MaterialTheme.typography.bodySmall, color = BentoTextSecondary)
                             Text(user?.email ?: "N/A", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold), color = BentoTextMain)
                         }
                     }
@@ -251,7 +275,7 @@ fun ProfileScreen(
                         .padding(18.dp)
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.HelpOutline, contentDescription = "Help", tint = BentoBlueContent, modifier = Modifier.size(20.dp))
+                        Icon(Icons.AutoMirrored.Filled.HelpOutline, contentDescription = "Help", tint = BentoBlueContent, modifier = Modifier.size(20.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "How Campus Credits (CC) Work",
@@ -325,7 +349,7 @@ fun ProfileScreen(
                                     .background(BentoLavenderContainer, shape = RoundedCornerShape(8.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Icon(Icons.Default.MenuBook, contentDescription = "Resource", tint = BentoLavenderContent, modifier = Modifier.size(18.dp))
+                                Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = "Resource", tint = BentoLavenderContent, modifier = Modifier.size(18.dp))
                             }
                         }
                     }

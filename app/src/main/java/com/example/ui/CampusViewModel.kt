@@ -299,6 +299,13 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
         _unlockedResourceIds.value = emptySet()
     }
 
+    fun updateUserProfile(updatedUser: User) {
+        viewModelScope.launch {
+            repository.updateUser(updatedUser)
+            _currentUser.value = updatedUser
+        }
+    }
+
     private fun observePostsForCollege(collegeName: String) {
         viewModelScope.launch {
             repository.getPostsForCollege(collegeName).collect { posts ->

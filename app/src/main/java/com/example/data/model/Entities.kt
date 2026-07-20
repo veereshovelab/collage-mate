@@ -10,7 +10,13 @@ data class User(
     val collegeName: String,
     val studentId: String,
     val major: String,
-    val points: Int = 100 // Starting balance for localized token collaboration
+    val points: Int = 100, // Starting balance for localized token collaboration
+    val bio: String = "",
+    val profilePictureUri: String? = null,
+    val appearance: String = "System",
+    val collegeCourse: String = "",
+    val phoneNumber: String = "",
+    val socialLink: String = ""
 )
 
 @Entity(tableName = "resource_materials")
