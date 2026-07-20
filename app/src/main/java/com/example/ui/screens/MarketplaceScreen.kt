@@ -83,7 +83,7 @@ fun MarketplaceScreen(
     var showUploadDialog by remember { mutableStateOf(false) }
     var selectedFilterCategory by remember { mutableStateOf("All") }
 
-    val filterChips = listOf("All", "CS201", "MATH302", "CHEM101", "Notes", "Study Guide", "Cheat Sheet")
+    val filterChips = listOf("All", "CS201", "MATH302", "CHEM101", "Assignment", "Notes", "Study Guide", "Cheat Sheet")
 
     val filteredResources = resources.filter { item ->
         when (selectedFilterCategory) {
@@ -91,6 +91,7 @@ fun MarketplaceScreen(
             "CS201" -> item.courseCode.contains("CS201", ignoreCase = true)
             "MATH302" -> item.courseCode.contains("MATH302", ignoreCase = true)
             "CHEM101" -> item.courseCode.contains("CHEM101", ignoreCase = true)
+            "Assignment" -> item.fileType.contains("Assignment", ignoreCase = true)
             "Notes" -> item.fileType.contains("Notes", ignoreCase = true)
             "Study Guide" -> item.fileType.contains("Guide", ignoreCase = true)
             "Cheat Sheet" -> item.fileType.contains("Cheat", ignoreCase = true)
@@ -450,7 +451,7 @@ fun UploadResourceDialog(
     var fileType by remember { mutableStateOf("Notes") }
     var priceInPoints by remember { mutableStateOf("15") }
 
-    val fileTypes = listOf("Notes", "Study Guide", "Cheat Sheet", "Exam Prep")
+    val fileTypes = listOf("Assignment", "Notes", "Study Guide", "Cheat Sheet", "Exam Prep")
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(

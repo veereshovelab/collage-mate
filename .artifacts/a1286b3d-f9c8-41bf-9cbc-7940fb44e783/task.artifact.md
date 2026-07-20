@@ -1,3 +1,5 @@
-- [x] Update `HomeScreen.kt` to make profile icons clickable
-- [x] Update `MainActivity.kt` to handle profile navigation and add animations
-- [x] Verify functionality
+- [x] Seed database with assignment samples in `CampusViewModel.kt`
+- [x] Add `ASSIGNMENTS` tab and icon in `MainActivity.kt`
+- [x] Create `AssignmentScreen.kt`
+- [x] Update `MarketplaceScreen.kt` to include "Assignment" category
+- [x] Verify build and functionality

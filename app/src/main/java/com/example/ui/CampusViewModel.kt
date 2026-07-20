@@ -191,6 +191,35 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     likedByEmails = "bob.baker@stateu.edu"
                 )
             )
+
+            // Seed initial assignments
+            repository.insertResource(
+                ResourceMaterial(
+                    title = "CS 102: Data Structures Lab 3 - Tree Traversal",
+                    courseCode = "CS102",
+                    professor = "Dr. Miller",
+                    semester = "Spring 2026",
+                    description = "Reference solution and explanatory notes for the binary search tree traversal lab. Includes edge case analysis.",
+                    fileType = "Assignment",
+                    uploaderEmail = "alice.adams@stateu.edu",
+                    uploaderName = "Alice Adams",
+                    priceInPoints = 20
+                )
+            )
+
+            repository.insertResource(
+                ResourceMaterial(
+                    title = "ECON 101: Macroeconomics Problem Set #2",
+                    courseCode = "ECON101",
+                    professor = "Prof. Smith",
+                    semester = "Spring 2026",
+                    description = "Detailed breakdown of the IS-LM model problem set. Step-by-step derivation of equilibrium points.",
+                    fileType = "Assignment",
+                    uploaderEmail = "charlie.chen@stateu.edu",
+                    uploaderName = "Charlie Chen",
+                    priceInPoints = 15
+                )
+            )
         }
     }
 

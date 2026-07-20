@@ -11,6 +11,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.MenuBook
@@ -37,6 +38,7 @@ import com.example.ui.screens.MarketplaceScreen
 import com.example.ui.screens.GigScreen
 import com.example.ui.screens.LoginScreen
 import com.example.ui.screens.ProfileScreen
+import com.example.ui.screens.AssignmentScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.theme.BentoBackground
 import com.example.ui.theme.BentoNavBg
@@ -61,7 +63,7 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class CampusTab {
-  FEED, MARKETPLACE, GIGS, PROFILE
+  FEED, ASSIGNMENTS, MARKETPLACE, GIGS, PROFILE
 }
 
 @Composable
@@ -93,6 +95,20 @@ fun MainAppContent(viewModel: CampusViewModel) {
               indicatorColor = BentoLilacContainer
             ),
             modifier = Modifier.testTag("tab_feed")
+          )
+          NavigationBarItem(
+            selected = currentTab == CampusTab.ASSIGNMENTS,
+            onClick = { currentTab = CampusTab.ASSIGNMENTS },
+            icon = { Icon(Icons.AutoMirrored.Filled.Assignment, contentDescription = "Assignments") },
+            label = { Text("Asgn", fontWeight = if (currentTab == CampusTab.ASSIGNMENTS) FontWeight.Bold else FontWeight.Medium) },
+            colors = NavigationBarItemDefaults.colors(
+              selectedIconColor = BentoLilacContent,
+              selectedTextColor = BentoLilacContent,
+              unselectedIconColor = BentoTextSecondary,
+              unselectedTextColor = BentoTextSecondary,
+              indicatorColor = BentoLilacContainer
+            ),
+            modifier = Modifier.testTag("tab_assignments")
           )
           NavigationBarItem(
             selected = currentTab == CampusTab.MARKETPLACE,
@@ -153,6 +169,7 @@ fun MainAppContent(viewModel: CampusViewModel) {
             modifier = modifier,
             onProfileClick = { currentTab = CampusTab.PROFILE }
           )
+          CampusTab.ASSIGNMENTS -> AssignmentScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.PROFILE -> ProfileScreen(viewModel = viewModel, modifier = modifier)
