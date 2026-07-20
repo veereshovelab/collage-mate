@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,7 +70,8 @@ import java.util.Locale
 @Composable
 fun HomeScreen(
     viewModel: CampusViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: () -> Unit = {}
 ) {
     val user by viewModel.currentUser.collectAsState()
     val posts by viewModel.feedPosts.collectAsState()
@@ -112,8 +114,10 @@ fun HomeScreen(
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .size(42.dp)
-                            .background(BentoLavenderContainer, shape = CircleShape)
-                            .border(2.dp, Color.White, CircleShape),
+                            .clip(CircleShape)
+                            .background(BentoLavenderContainer)
+                            .border(2.dp, Color.White, CircleShape)
+                            .clickable { onProfileClick() },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -159,7 +163,8 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .size(36.dp)
                                     .clip(CircleShape)
-                                    .background(BentoLavenderContent),
+                                    .background(BentoLavenderContent)
+                                    .clickable { onProfileClick() },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
