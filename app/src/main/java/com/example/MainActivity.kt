@@ -4,6 +4,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -136,11 +140,23 @@ fun MainAppContent(viewModel: CampusViewModel) {
       }
     ) { innerPadding ->
       val modifier = Modifier.padding(innerPadding)
-      when (currentTab) {
-        CampusTab.FEED -> HomeScreen(viewModel = viewModel, modifier = modifier)
-        CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
-        CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
-        CampusTab.PROFILE -> ProfileScreen(viewModel = viewModel, modifier = modifier)
+      AnimatedContent(
+        targetState = currentTab,
+        label = "tab_transition",
+        transitionSpec = {
+          fadeIn().togetherWith(fadeOut())
+        }
+      ) { targetTab ->
+        when (targetTab) {
+          CampusTab.FEED -> HomeScreen(
+            viewModel = viewModel,
+            modifier = modifier,
+            onProfileClick = { currentTab = CampusTab.PROFILE }
+          )
+          CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
+          CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
+          CampusTab.PROFILE -> ProfileScreen(viewModel = viewModel, modifier = modifier)
+        }
       }
     }
   }

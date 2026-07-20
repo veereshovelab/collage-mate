@@ -1,24 +1,26 @@
-# Implementation Plan - Fix Android Resource Linking Error
+# Implementation Plan - Make Profile Logo Clickable and Navigate to Profile
 
-The project is failing to build because `AndroidManifest.xml` references a missing resource `@drawable/clgmate_logo`. Additionally, the standard adaptive icon definitions in the project are broken as they reference a missing `@drawable/ic_launcher_foreground`.
+The user wants to make the profile logo on the first page (feed) clickable and redirect the user to the profile page.
 
 ## Proposed Changes
 
-### Android Manifest
+### UI Screens
 
-#### [MODIFY] [AndroidManifest.xml](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/AndroidManifest.xml)
-- Update `android:icon` to use `@mipmap/ic_launcher`.
-- Update `android:roundIcon` to use `@mipmap/ic_launcher_round`.
+#### [MODIFY] [HomeScreen.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/ui/screens/HomeScreen.kt)
+- Add `onProfileClick: () -> Unit` parameter to the `HomeScreen` composable.
+- Make the profile avatar in the `TopAppBar` clickable by adding a `clickable` modifier to the `Box`.
+- Make the profile avatar in the "Write Post" section clickable as well.
 
-### Resources
-
-#### [NEW] [ic_launcher_foreground.xml](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/res/drawable/ic_launcher_foreground.xml)
-- Create a placeholder vector drawable to serve as the foreground for the adaptive icon, resolving the broken references in `ic_launcher.xml` and `ic_launcher_round.xml`.
+#### [MODIFY] [MainActivity.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/MainActivity.kt)
+- Pass a lambda to `HomeScreen` that updates the `currentTab` state to `CampusTab.PROFILE`.
+- Implement `AnimatedContent` for tab switching to provide a smooth "attached" transition between screens, addressing the "with attachment" part of the request as a smooth visual transition.
 
 ## Verification Plan
 
-### Automated Tests
-- Run `./gradlew :app:processDebugResources` to verify that AAPT no longer reports missing resources and the build completes successfully.
-
 ### Manual Verification
-- None required as this is a build-fix task.
+- Deploy the app to a device or emulator.
+- On the Home (Feed) screen, tap the profile avatar in the top-right corner of the `TopAppBar`.
+- Verify that the app switches to the Profile tab.
+- Tap the profile avatar next to the "Share an update..." input box.
+- Verify that the app switches to the Profile tab.
+- Observe the smooth transition between tabs.
