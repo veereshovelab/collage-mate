@@ -36,6 +36,10 @@ class CampusRepository(
         }
     }
 
+    fun getResourcesByCollege(collegeName: String): Flow<List<ResourceMaterial>> = resourceDao.getResourcesByCollege(collegeName)
+
+    fun getUniqueColleges(): Flow<List<String>> = resourceDao.getUniqueColleges()
+
     suspend fun insertResource(material: ResourceMaterial) = resourceDao.insertResource(material)
 
     suspend fun deleteResource(id: Int) = resourceDao.deleteResource(id)

@@ -4,14 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.MenuBook
@@ -37,10 +32,7 @@ import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.MarketplaceScreen
 import com.example.ui.screens.GigScreen
 import com.example.ui.screens.LoginScreen
-import com.example.ui.screens.ResourceExchangeScreen
 import com.example.ui.screens.ProfileScreen
-import com.example.ui.screens.EditProfileScreen
-import com.example.ui.screens.AssignmentScreen
 import com.example.ui.theme.MyApplicationTheme
 import com.example.ui.theme.BentoBackground
 import com.example.ui.theme.BentoNavBg
@@ -65,14 +57,13 @@ class MainActivity : ComponentActivity() {
 }
 
 enum class CampusTab {
-  FEED, ASSIGNMENTS, MARKETPLACE, GIGS, PROFILE
+  FEED, MARKETPLACE, GIGS, PROFILE
 }
 
 @Composable
 fun MainAppContent(viewModel: CampusViewModel) {
   val currentUser by viewModel.currentUser.collectAsState()
   var currentTab by remember { mutableStateOf(CampusTab.FEED) }
-  var isEditingProfile by remember { mutableStateOf(false) }
 
   if (currentUser == null) {
     LoginScreen(viewModel = viewModel)
@@ -98,20 +89,6 @@ fun MainAppContent(viewModel: CampusViewModel) {
               indicatorColor = BentoLilacContainer
             ),
             modifier = Modifier.testTag("tab_feed")
-          )
-          NavigationBarItem(
-            selected = currentTab == CampusTab.ASSIGNMENTS,
-            onClick = { currentTab = CampusTab.ASSIGNMENTS },
-            icon = { Icon(Icons.AutoMirrored.Filled.Assignment, contentDescription = "Exchange") },
-            label = { Text("Exchange", fontWeight = if (currentTab == CampusTab.ASSIGNMENTS) FontWeight.Bold else FontWeight.Medium) },
-            colors = NavigationBarItemDefaults.colors(
-              selectedIconColor = BentoLilacContent,
-              selectedTextColor = BentoLilacContent,
-              unselectedIconColor = BentoTextSecondary,
-              unselectedTextColor = BentoTextSecondary,
-              indicatorColor = BentoLilacContainer
-            ),
-            modifier = Modifier.testTag("tab_exchange")
           )
           NavigationBarItem(
             selected = currentTab == CampusTab.MARKETPLACE,
@@ -159,38 +136,11 @@ fun MainAppContent(viewModel: CampusViewModel) {
       }
     ) { innerPadding ->
       val modifier = Modifier.padding(innerPadding)
-      AnimatedContent(
-        targetState = currentTab,
-        label = "tab_transition",
-        transitionSpec = {
-          fadeIn().togetherWith(fadeOut())
-        }
-      ) { targetTab ->
-        when (targetTab) {
-          CampusTab.FEED -> HomeScreen(
-            viewModel = viewModel,
-            modifier = modifier,
-            onProfileClick = { currentTab = CampusTab.PROFILE }
-          )
-          CampusTab.ASSIGNMENTS -> ResourceExchangeScreen(modifier = modifier)
-          CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
-          CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
-          CampusTab.PROFILE -> {
-            if (isEditingProfile) {
-              EditProfileScreen(
-                viewModel = viewModel,
-                onBack = { isEditingProfile = false },
-                modifier = modifier
-              )
-            } else {
-              ProfileScreen(
-                viewModel = viewModel,
-                onEditClick = { isEditingProfile = true },
-                modifier = modifier
-              )
-            }
-          }
-        }
+      when (currentTab) {
+        CampusTab.FEED -> HomeScreen(viewModel = viewModel, modifier = modifier)
+        CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
+        CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
+        CampusTab.PROFILE -> ProfileScreen(viewModel = viewModel, modifier = modifier)
       }
     }
   }
