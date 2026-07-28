@@ -50,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,7 +61,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.FeedPost
+import com.example.data.model.FriendSuggestion
+import com.example.data.model.HomeFeedItem
 import com.example.ui.CampusViewModel
+import com.example.ui.components.FriendSuggestionCarousel
 import com.example.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -78,6 +82,29 @@ fun HomeScreen(
 
     var postContent by remember { mutableStateOf("") }
     var isPostingBoxExpanded by remember { mutableStateOf(false) }
+
+    val mockSuggestions = remember {
+        mutableStateListOf(
+            FriendSuggestion("1", "Alex Rivers", "3 mutual friends", "A"),
+            FriendSuggestion("2", "Sam Knight", "Nearby", "S"),
+            FriendSuggestion("3", "Jordan Lee", "In your major", "J"),
+            FriendSuggestion("4", "Casey Brown", "Mutual group", "C")
+        )
+    }
+
+    val feedItems = remember(posts, mockSuggestions.size) {
+        val items = mutableListOf<HomeFeedItem>()
+        posts.forEachIndexed { index, post ->
+            items.add(HomeFeedItem.Post(post))
+            if (index == 1 && mockSuggestions.isNotEmpty()) {
+                items.add(HomeFeedItem.Suggestions(mockSuggestions.toList()))
+            }
+        }
+        if (posts.size <= 1 && mockSuggestions.isNotEmpty()) {
+            items.add(HomeFeedItem.Suggestions(mockSuggestions.toList()))
+        }
+        items
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -294,15 +321,33 @@ fun HomeScreen(
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(posts) { post ->
-                        PostItem(
-                            post = post,
-                            currentUserEmail = user?.email ?: "",
-                            onLikeToggle = { viewModel.toggleLikePost(post) }
-                        )
+                    items(feedItems) { item ->
+                        when (item) {
+                            is HomeFeedItem.Post -> {
+                                Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                    PostItem(
+                                        post = item.post,
+                                        currentUserEmail = user?.email ?: "",
+                                        onLikeToggle = { viewModel.toggleLikePost(item.post) }
+                                    )
+                                }
+                            }
+                            is HomeFeedItem.Suggestions -> {
+                                FriendSuggestionCarousel(
+                                    suggestions = item.suggestions,
+                                    onConnect = { suggestion ->
+                                        // Connect logic
+                                        mockSuggestions.remove(suggestion)
+                                    },
+                                    onDismissSuggestion = { suggestion ->
+                                        mockSuggestions.remove(suggestion)
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }

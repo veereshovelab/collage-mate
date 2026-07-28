@@ -37,6 +37,7 @@ import com.example.ui.screens.HomeScreen
 import com.example.ui.screens.MarketplaceScreen
 import com.example.ui.screens.GigScreen
 import com.example.ui.screens.LoginScreen
+import com.example.ui.screens.ResourceExchangeScreen
 import com.example.ui.screens.ProfileScreen
 import com.example.ui.screens.EditProfileScreen
 import com.example.ui.screens.AssignmentScreen
@@ -101,8 +102,8 @@ fun MainAppContent(viewModel: CampusViewModel) {
           NavigationBarItem(
             selected = currentTab == CampusTab.ASSIGNMENTS,
             onClick = { currentTab = CampusTab.ASSIGNMENTS },
-            icon = { Icon(Icons.AutoMirrored.Filled.Assignment, contentDescription = "Assignments") },
-            label = { Text("Asgn", fontWeight = if (currentTab == CampusTab.ASSIGNMENTS) FontWeight.Bold else FontWeight.Medium) },
+            icon = { Icon(Icons.AutoMirrored.Filled.Assignment, contentDescription = "Exchange") },
+            label = { Text("Exchange", fontWeight = if (currentTab == CampusTab.ASSIGNMENTS) FontWeight.Bold else FontWeight.Medium) },
             colors = NavigationBarItemDefaults.colors(
               selectedIconColor = BentoLilacContent,
               selectedTextColor = BentoLilacContent,
@@ -110,7 +111,7 @@ fun MainAppContent(viewModel: CampusViewModel) {
               unselectedTextColor = BentoTextSecondary,
               indicatorColor = BentoLilacContainer
             ),
-            modifier = Modifier.testTag("tab_assignments")
+            modifier = Modifier.testTag("tab_exchange")
           )
           NavigationBarItem(
             selected = currentTab == CampusTab.MARKETPLACE,
@@ -171,7 +172,7 @@ fun MainAppContent(viewModel: CampusViewModel) {
             modifier = modifier,
             onProfileClick = { currentTab = CampusTab.PROFILE }
           )
-          CampusTab.ASSIGNMENTS -> AssignmentScreen(viewModel = viewModel, modifier = modifier)
+          CampusTab.ASSIGNMENTS -> ResourceExchangeScreen(modifier = modifier)
           CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
           CampusTab.PROFILE -> {

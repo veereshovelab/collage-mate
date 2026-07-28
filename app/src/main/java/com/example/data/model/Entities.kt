@@ -61,3 +61,15 @@ data class FeedPost(
     val likedByEmails: String = "", // Comma-separated list of emails who liked
     val timestamp: Long = System.currentTimeMillis()
 )
+
+data class FriendSuggestion(
+    val id: String,
+    val name: String,
+    val context: String, // e.g., "3 mutual friends", "Nearby"
+    val avatarInitial: String
+)
+
+sealed class HomeFeedItem {
+    data class Post(val post: FeedPost) : HomeFeedItem()
+    data class Suggestions(val suggestions: List<FriendSuggestion>) : HomeFeedItem()
+}
