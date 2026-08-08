@@ -285,7 +285,7 @@ fun ProfileScreen(
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(
-                        text = "ClgMate is a localized campus utility. To ensure secure, collaborative peer networking and explicitly ban cash-outs/outsourcing, students cooperate using tokens:\n\n" +
+                        text = "Campusdeck is a localized campus utility. To ensure secure, collaborative peer networking and explicitly ban cash-outs/outsourcing, students cooperate using tokens:\n\n" +
                                 "• 📤 Upload course guides or class notes to the library. When peers unlock them, your account receives those CC credits.\n\n" +
                                 "• 🤝 Need peer tutoring or to borrow hardware? Post a gig, which locks reward points in escrow. When completed, points transfer to the helper.",
                         style = MaterialTheme.typography.bodySmall,

@@ -1,32 +1,35 @@
-# Walkthrough - New Assignment Section
+# Walkthrough - Complete Rebrand to Campusdeck
 
-I have added a dedicated **Assignment Vault** section to the ClgMate app. This allows students to share, find, and unlock assignment resources specifically.
+I have successfully rebranded the entire application from **ClgMate** to **Campusdeck**. This included updating the project identity, UI text, assets, and database configuration.
 
 ## Changes Made
 
-### 1. Dedicated Assignment Screen
-- Created [AssignmentScreen.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/ui/screens/AssignmentScreen.kt), a specialized UI for browsing and uploading assignment-related documents.
-- The screen features a unique "Bento Pink" theme to distinguish it from the general resource library.
+### 1. Identity & Build Configuration
+- **Application ID**: Changed to `com.aistudio.campusdeck.xyrvwn` in [app/build.gradle.kts](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/build.gradle.kts).
+- **Project Name**: Updated to `Campusdeck` in [settings.gradle.kts](file:///C:/Users/Microsoft/StudioProjects/collage-mate/settings.gradle.kts) and [strings.xml](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/res/values/strings.xml).
+- **Metadata**: Updated [metadata.json](file:///C:/Users/Microsoft/StudioProjects/collage-mate/metadata.json) with the new brand name and description.
 
-### 2. Navigation Integration
-- Added a new **Asgn** tab to the bottom navigation bar in [MainActivity.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/MainActivity.kt).
-- Integrated smooth transitions when navigating to the Assignment Vault.
+### 2. Assets & Branding
+- **Logo**: Renamed `clgmate_logo.xml` to `campusdeck_logo.xml`.
+- **Icons**: Updated [ic_launcher.xml](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml) and [ic_launcher_round.xml](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml) to reference the new logo resource.
 
-### 3. Data & Backend
-- Updated [CampusViewModel.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/ui/CampusViewModel.kt) to seed the database with initial assignment samples (e.g., CS 102 Lab, ECON 101 Problem Set).
-- Updated [MarketplaceScreen.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/ui/screens/MarketplaceScreen.kt) to include "Assignment" in its classification filters and upload options.
+### 3. User Interface Overhaul
+- **Home Screen**: Updated the title header in [HomeScreen.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/ui/screens/HomeScreen.kt).
+- **Login Screen**: Updated welcome text and auth card labels in [LoginScreen.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/ui/screens/LoginScreen.kt).
+- **Profile Screen**: Updated the informational "How CC Works" section in [ProfileScreen.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/ui/screens/ProfileScreen.kt).
+
+### 4. Data Layer
+- **Database**: Renamed the local Room database to `campusdeck_database` in [AppDatabase.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/data/db/AppDatabase.kt).
+- **Seeded Content**: Updated the initial greeting post in [CampusViewModel.kt](file:///C:/Users/Microsoft/StudioProjects/collage-mate/app/src/main/java/com/example/ui/CampusViewModel.kt).
 
 ## Verification Results
 
 ### Build Success
-The project builds successfully with the new section.
+The project builds successfully with the new package name and branding.
 ```bash
-$ ./gradlew :app:assembleDebug
-BUILD SUCCESSFUL
+$ ./gradlew clean :app:assembleDebug
+BUILD SUCCESSFUL in 6s
 ```
 
-### Manual Verification
-- Navigate to the **Asgn** tab in the bottom bar.
-- See the seeded assignments from "Alice Adams" and "Charlie Chen".
-- Try uploading a new assignment using the `+` Floating Action Button.
-- Verify that assignments are unlockable using Campus Credits (CC).
+> [!IMPORTANT]
+> Because the `applicationId` has changed, you should uninstall the old "ClgMate" app from your device/emulator before running the new "Campusdeck" app to avoid conflicts.

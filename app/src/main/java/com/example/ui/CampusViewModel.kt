@@ -37,6 +37,15 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
     private val _feedPosts = MutableStateFlow<List<FeedPost>>(emptyList())
     val feedPosts: StateFlow<List<FeedPost>> = _feedPosts.asStateFlow()
 
+    private val _collegeNames = MutableStateFlow<List<String>>(emptyList())
+    val collegeNames: StateFlow<List<String>> = _collegeNames.asStateFlow()
+
+    private val _selectedCollegeResources = MutableStateFlow<List<ResourceMaterial>>(emptyList())
+    val selectedCollegeResources: StateFlow<List<ResourceMaterial>> = _selectedCollegeResources.asStateFlow()
+
+    private val _collegeSearchQuery = MutableStateFlow("")
+    val collegeSearchQuery: StateFlow<String> = _collegeSearchQuery.asStateFlow()
+
     private val _unlockedResourceIds = MutableStateFlow<Set<Int>>(emptySet())
     val unlockedResourceIds: StateFlow<Set<Int>> = _unlockedResourceIds.asStateFlow()
 
@@ -63,6 +72,13 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             repository.getAllGigs().collect { list ->
                 _gigs.value = list
+            }
+        }
+
+        // Initialize college names
+        viewModelScope.launch {
+            repository.getUniqueColleges().collect { list ->
+                _collegeNames.value = list
             }
         }
 
@@ -97,6 +113,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     fileType = "PDF Study Guide",
                     uploaderEmail = "alice.adams@stateu.edu",
                     uploaderName = "Alice Adams",
+                    collegeName = "State University",
                     priceInPoints = 15
                 )
             )
@@ -111,6 +128,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     fileType = "PDF Lecture Notes",
                     uploaderEmail = "bob.baker@stateu.edu",
                     uploaderName = "Bob Baker",
+                    collegeName = "State University",
                     priceInPoints = 25
                 )
             )
@@ -125,6 +143,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     fileType = "Cheat Sheet",
                     uploaderEmail = "charlie.chen@stateu.edu",
                     uploaderName = "Charlie Chen",
+                    collegeName = "State University",
                     priceInPoints = 10
                 )
             )
@@ -175,7 +194,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     collegeName = "State University",
                     authorName = "Dean's Office",
                     authorEmail = "dean.office@stateu.edu",
-                    content = "Welcome to ClgMate! This is your localized collegiate board. Reminder: annual Campus Hackathon registration closes tomorrow at 5:00 PM. Team up and register!",
+                    content = "Welcome to Campusdeck! This is your localized collegiate board. Reminder: annual Campus Hackathon registration closes tomorrow at 5:00 PM. Team up and register!",
                     likesCount = 24,
                     likedByEmails = "alice.adams@stateu.edu,bob.baker@stateu.edu"
                 )
@@ -189,6 +208,37 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                     content = "To whoever left their blue Hydroflask in the Student Union basement study room yesterday—I gave it to the front desk lost-and-found! Hope you find it.",
                     likesCount = 8,
                     likedByEmails = "bob.baker@stateu.edu"
+                )
+            )
+
+            // Seed initial assignments
+            repository.insertResource(
+                ResourceMaterial(
+                    title = "CS 102: Data Structures Lab 3 - Tree Traversal",
+                    courseCode = "CS102",
+                    professor = "Dr. Miller",
+                    semester = "Spring 2026",
+                    description = "Reference solution and explanatory notes for the binary search tree traversal lab. Includes edge case analysis.",
+                    fileType = "Assignment",
+                    uploaderEmail = "alice.adams@stateu.edu",
+                    uploaderName = "Alice Adams",
+                    collegeName = "State University",
+                    priceInPoints = 20
+                )
+            )
+
+            repository.insertResource(
+                ResourceMaterial(
+                    title = "ECON 101: Macroeconomics Problem Set #2",
+                    courseCode = "ECON101",
+                    professor = "Prof. Smith",
+                    semester = "Spring 2026",
+                    description = "Detailed breakdown of the IS-LM model problem set. Step-by-step derivation of equilibrium points.",
+                    fileType = "Assignment",
+                    uploaderEmail = "charlie.chen@stateu.edu",
+                    uploaderName = "Charlie Chen",
+                    collegeName = "State University",
+                    priceInPoints = 15
                 )
             )
         }
@@ -283,6 +333,25 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
         _searchQuery.value = query
     }
 
+    fun setCollegeSearchQuery(query: String) {
+        _collegeSearchQuery.value = query
+    }
+
+    fun selectCollege(collegeName: String) {
+        viewModelScope.launch {
+            repository.getResourcesByCollege(collegeName).collect { list ->
+                _selectedCollegeResources.value = list
+            }
+        }
+    }
+
+    fun updateUserProfile(user: User) {
+        viewModelScope.launch {
+            repository.updateUser(user)
+            _currentUser.value = user
+        }
+    }
+
     fun addResource(title: String, courseCode: String, professor: String, semester: String, description: String, fileType: String, priceInPoints: Int) {
         val user = _currentUser.value ?: return
         viewModelScope.launch {
@@ -295,6 +364,7 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
                 fileType = fileType,
                 uploaderEmail = user.email,
                 uploaderName = user.name,
+                collegeName = user.collegeName,
                 priceInPoints = priceInPoints
             )
             repository.insertResource(material)
