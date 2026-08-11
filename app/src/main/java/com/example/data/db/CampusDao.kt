@@ -40,6 +40,12 @@ interface ResourceDao {
     @Query("SELECT * FROM resource_materials WHERE title LIKE :query OR courseCode LIKE :query OR professor LIKE :query ORDER BY timestamp DESC")
     fun searchResources(query: String): Flow<List<ResourceMaterial>>
 
+    @Query("SELECT * FROM resource_materials WHERE collegeName = :collegeName ORDER BY timestamp DESC")
+    fun getResourcesByCollege(collegeName: String): Flow<List<ResourceMaterial>>
+
+    @Query("SELECT DISTINCT collegeName FROM resource_materials UNION SELECT DISTINCT collegeName FROM users")
+    fun getUniqueColleges(): Flow<List<String>>
+
     @Query("DELETE FROM resource_materials WHERE id = :id")
     suspend fun deleteResource(id: Int)
 }

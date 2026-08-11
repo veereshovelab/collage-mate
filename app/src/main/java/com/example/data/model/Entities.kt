@@ -10,7 +10,13 @@ data class User(
     val collegeName: String,
     val studentId: String,
     val major: String,
-    val points: Int = 100 // Starting balance for localized token collaboration
+    val points: Int = 100, // Starting balance for localized token collaboration
+    val bio: String = "",
+    val profilePictureUri: String? = null,
+    val appearance: String = "System",
+    val collegeCourse: String = "",
+    val phoneNumber: String = "",
+    val socialLink: String = ""
 )
 
 @Entity(tableName = "resource_materials")
@@ -24,6 +30,7 @@ data class ResourceMaterial(
     val fileType: String, // PDF, Study Guide, Exam Prep
     val uploaderEmail: String,
     val uploaderName: String,
+    val collegeName: String,
     val priceInPoints: Int,
     val timestamp: Long = System.currentTimeMillis()
 )
@@ -55,3 +62,15 @@ data class FeedPost(
     val likedByEmails: String = "", // Comma-separated list of emails who liked
     val timestamp: Long = System.currentTimeMillis()
 )
+
+data class FriendSuggestion(
+    val id: String,
+    val name: String,
+    val context: String, // e.g., "3 mutual friends", "Nearby"
+    val avatarInitial: String
+)
+
+sealed class HomeFeedItem {
+    data class Post(val post: FeedPost) : HomeFeedItem()
+    data class Suggestions(val suggestions: List<FriendSuggestion>) : HomeFeedItem()
+}

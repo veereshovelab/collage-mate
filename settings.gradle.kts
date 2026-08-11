@@ -1,14 +1,8 @@
 pluginManagement {
   repositories {
-    google {
-      content {
-        includeGroupByRegex("com\\.android.*")
-        includeGroupByRegex("com\\.google.*")
-        includeGroupByRegex("androidx.*")
-      }
-    }
-    mavenCentral()
     gradlePluginPortal()
+    google()
+    mavenCentral()
   }
 }
 
@@ -22,6 +16,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "ClgMate"
+rootProject.name = "Campusdeck"
 
 include(":app")
