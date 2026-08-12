@@ -9,7 +9,27 @@ import com.example.data.model.User
 import com.example.data.model.ResourceMaterial
 import com.example.data.model.Gig
 import com.example.data.model.FeedPost
+import com.example.data.model.DirectMessage
+import com.example.data.model.ChatMessage
 import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface MessageDao {
+    @Query("SELECT * FROM direct_messages WHERE participant1Email = :email OR participant2Email = :email ORDER BY lastMessageTimestamp DESC")
+    fun getDirectMessagesForUser(email: String): Flow<List<DirectMessage>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDirectMessage(message: DirectMessage): Long
+
+    @Query("SELECT * FROM chat_messages WHERE chatId = :chatId ORDER BY timestamp ASC")
+    fun getChatMessages(chatId: Int): Flow<List<ChatMessage>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertChatMessage(message: ChatMessage)
+
+    @Query("UPDATE direct_messages SET lastMessage = :lastMessage, lastMessageTimestamp = :timestamp WHERE id = :chatId")
+    suspend fun updateLastMessage(chatId: Int, lastMessage: String, timestamp: Long)
+}
 
 @Dao
 interface UserDao {

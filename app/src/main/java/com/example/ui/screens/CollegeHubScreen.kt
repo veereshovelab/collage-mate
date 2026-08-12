@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.model.ResourceMaterial
 import com.example.ui.CampusViewModel
+import com.example.ui.components.GlassCard
 import com.example.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -182,16 +183,12 @@ fun ResourceSummaryCard(
     containerColor: Color,
     contentColor: Color
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(1.dp, BentoBorder.copy(alpha = 0.4f), RoundedCornerShape(16.dp)),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(0.dp)
+    GlassCard(
+        modifier = Modifier.fillMaxWidth(),
+        cornerRadius = 16.dp
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(

@@ -30,3 +30,12 @@ val BentoBlueContainer = Color(0xFFD3E3FD)
 val BentoBlueContent = Color(0xFF041E49)
 
 val BentoNavBg = Color(0xFFF3EDF7)
+
+// Glassmorphism Palette
+val GlassWhite = Color(0x99FFFFFF)
+val GlassWhiteBorder = Color(0x4DFFFFFF)
+val GlassDark = Color(0x991D1B20)
+val GlassDarkBorder = Color(0x4D1D1B20)
+
+val GlassBlue = Color(0x66D3E3FD)
+val GlassLilac = Color(0x66E8DEF8)

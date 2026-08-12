@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ui.components.GlassCard
 import com.example.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -165,18 +166,12 @@ fun SearchBarComponent(
 
 @Composable
 fun ResourceExchangeCard(resource: ResourceItemData) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(1.dp, BentoBorder.copy(alpha = 0.5f), RoundedCornerShape(24.dp)),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(0.dp)
+    GlassCard(
+        modifier = Modifier.fillMaxWidth(),
+        cornerRadius = 24.dp
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),

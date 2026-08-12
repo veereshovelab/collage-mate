@@ -54,6 +54,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.CampusViewModel
+import com.example.ui.components.ResourceCardItem
+import com.example.ui.components.UploadResourceDialog
 import com.example.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)

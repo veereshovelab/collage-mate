@@ -4,15 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.Campaign
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Person
@@ -22,9 +21,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.ui.CampusViewModel
+import com.example.ui.components.glassEffect
 import com.example.ui.screens.*
 import com.example.ui.theme.*
 
@@ -41,15 +49,25 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-enum class CampusTab {
-  FEED, ASSIGNMENTS, MARKETPLACE, GIGS, PROFILE, EDIT_PROFILE, COLLEGE_SEARCH, COLLEGE_HUB
+enum class CampusTab(val route: String) {
+  FEED("feed"),
+  ASSIGNMENTS("assignments"),
+  MARKETPLACE("marketplace"),
+  GIGS("gigs"),
+  PROFILE("profile"),
+  EDIT_PROFILE("edit_profile"),
+  COLLEGE_SEARCH("college_search"),
+  COLLEGE_HUB("college_hub/{collegeName}"),
+  MESSAGES("messages"),
+  CHAT("chat/{chatId}")
 }
 
 @Composable
 fun MainAppContent(viewModel: CampusViewModel) {
   val currentUser by viewModel.currentUser.collectAsState()
-  var currentTab by remember { mutableStateOf(CampusTab.FEED) }
-  var selectedCollegeName by remember { mutableStateOf("") }
+  val navController = rememberNavController()
+  val navBackStackEntry by navController.currentBackStackEntryAsState()
+  val currentRoute = navBackStackEntry?.destination?.route
 
   if (currentUser == null) {
     LoginScreen(viewModel = viewModel)
@@ -58,130 +76,122 @@ fun MainAppContent(viewModel: CampusViewModel) {
       modifier = Modifier.fillMaxSize(),
       containerColor = BentoBackground,
       bottomBar = {
-        // Only show bottom navigation on main tabs
-        val mainTabs = listOf(CampusTab.FEED, CampusTab.ASSIGNMENTS, CampusTab.MARKETPLACE, CampusTab.GIGS, CampusTab.PROFILE)
-        if (currentTab in mainTabs) {
+        val mainTabs = listOf(CampusTab.FEED, CampusTab.ASSIGNMENTS, CampusTab.MESSAGES, CampusTab.MARKETPLACE, CampusTab.GIGS, CampusTab.PROFILE)
+        val showBottomBar = currentRoute in mainTabs.map { it.route }
+        
+        if (showBottomBar) {
           NavigationBar(
-            containerColor = BentoNavBg,
-            contentColor = BentoTextMain
+            containerColor = Color.Transparent,
+            contentColor = BentoTextMain,
+            modifier = Modifier
+              .padding(horizontal = 16.dp, vertical = 8.dp)
+              .glassEffect(cornerRadius = 32.dp)
           ) {
-            NavigationBarItem(
-              selected = currentTab == CampusTab.FEED,
-              onClick = { currentTab = CampusTab.FEED },
-              icon = { Icon(Icons.Default.Campaign, contentDescription = "Feed") },
-              label = { Text("Feed", fontWeight = if (currentTab == CampusTab.FEED) FontWeight.Bold else FontWeight.Medium) },
-              colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = BentoLilacContent,
-                selectedTextColor = BentoLilacContent,
-                unselectedIconColor = BentoTextSecondary,
-                unselectedTextColor = BentoTextSecondary,
-                indicatorColor = BentoLilacContainer
-              ),
-              modifier = Modifier.testTag("tab_feed")
-            )
-            NavigationBarItem(
-              selected = currentTab == CampusTab.ASSIGNMENTS,
-              onClick = { currentTab = CampusTab.ASSIGNMENTS },
-              icon = { Icon(Icons.AutoMirrored.Filled.Assignment, contentDescription = "Assignments") },
-              label = { Text("Asgn", fontWeight = if (currentTab == CampusTab.ASSIGNMENTS) FontWeight.Bold else FontWeight.Medium) },
-              colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = BentoLilacContent,
-                selectedTextColor = BentoLilacContent,
-                unselectedIconColor = BentoTextSecondary,
-                unselectedTextColor = BentoTextSecondary,
-                indicatorColor = BentoLilacContainer
-              ),
-              modifier = Modifier.testTag("tab_assignments")
-            )
-            NavigationBarItem(
-              selected = currentTab == CampusTab.MARKETPLACE,
-              onClick = { currentTab = CampusTab.MARKETPLACE },
-              icon = { Icon(Icons.Default.MenuBook, contentDescription = "Marketplace") },
-              label = { Text("Market", fontWeight = if (currentTab == CampusTab.MARKETPLACE) FontWeight.Bold else FontWeight.Medium) },
-              colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = BentoLilacContent,
-                selectedTextColor = BentoLilacContent,
-                unselectedIconColor = BentoTextSecondary,
-                unselectedTextColor = BentoTextSecondary,
-                indicatorColor = BentoLilacContainer
-              ),
-              modifier = Modifier.testTag("tab_marketplace")
-            )
-            NavigationBarItem(
-              selected = currentTab == CampusTab.GIGS,
-              onClick = { currentTab = CampusTab.GIGS },
-              icon = { Icon(Icons.Default.Handshake, contentDescription = "Gig Board") },
-              label = { Text("Gigs", fontWeight = if (currentTab == CampusTab.GIGS) FontWeight.Bold else FontWeight.Medium) },
-              colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = BentoLilacContent,
-                selectedTextColor = BentoLilacContent,
-                unselectedIconColor = BentoTextSecondary,
-                unselectedTextColor = BentoTextSecondary,
-                indicatorColor = BentoLilacContainer
-              ),
-              modifier = Modifier.testTag("tab_gigs")
-            )
-            NavigationBarItem(
-              selected = currentTab == CampusTab.PROFILE,
-              onClick = { currentTab = CampusTab.PROFILE },
-              icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
-              label = { Text("Profile", fontWeight = if (currentTab == CampusTab.PROFILE) FontWeight.Bold else FontWeight.Medium) },
-              colors = NavigationBarItemDefaults.colors(
-                selectedIconColor = BentoLilacContent,
-                selectedTextColor = BentoLilacContent,
-                unselectedIconColor = BentoTextSecondary,
-                unselectedTextColor = BentoTextSecondary,
-                indicatorColor = BentoLilacContainer
-              ),
-              modifier = Modifier.testTag("tab_profile")
-            )
+            mainTabs.forEach { tab ->
+              // Only show Messages for Students
+              if (tab == CampusTab.MESSAGES && currentUser?.role != "Student") return@forEach
+
+              NavigationBarItem(
+                selected = currentRoute == tab.route,
+                onClick = {
+                  navController.navigate(tab.route) {
+                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                  }
+                },
+                icon = {
+                  val icon = when (tab) {
+                    CampusTab.FEED -> Icons.Default.Campaign
+                    CampusTab.ASSIGNMENTS -> Icons.AutoMirrored.Filled.Assignment
+                    CampusTab.MARKETPLACE -> Icons.Default.MenuBook
+                    CampusTab.GIGS -> Icons.Default.Handshake
+                    CampusTab.PROFILE -> Icons.Default.Person
+                    CampusTab.MESSAGES -> Icons.Default.Email // Placeholder icon
+                    else -> Icons.Default.Campaign
+                  }
+                  Icon(icon, contentDescription = tab.name)
+                },
+                label = { Text(tab.name.lowercase().capitalize(), fontWeight = if (currentRoute == tab.route) FontWeight.Bold else FontWeight.Medium) },
+                colors = NavigationBarItemDefaults.colors(
+                  selectedIconColor = BentoLilacContent,
+                  selectedTextColor = BentoLilacContent,
+                  unselectedIconColor = BentoTextSecondary,
+                  unselectedTextColor = BentoTextSecondary,
+                  indicatorColor = BentoLilacContainer
+                )
+              )
+            }
           }
         }
       }
     ) { innerPadding ->
-      val modifier = Modifier.padding(innerPadding)
-      AnimatedContent(
-        targetState = currentTab,
-        label = "tab_transition",
-        transitionSpec = {
-          fadeIn().togetherWith(fadeOut())
+      NavHost(
+        navController = navController,
+        startDestination = CampusTab.FEED.route,
+        modifier = Modifier.padding(innerPadding),
+        enterTransition = { fadeIn(animationSpec = tween(400)) + slideInHorizontally(initialOffsetX = { it / 2 }) },
+        exitTransition = { fadeOut(animationSpec = tween(400)) + slideOutHorizontally(targetOffsetX = { -it / 2 }) },
+        popEnterTransition = { fadeIn(animationSpec = tween(400)) + slideInHorizontally(initialOffsetX = { -it / 2 }) },
+        popExitTransition = { fadeOut(animationSpec = tween(400)) + slideOutHorizontally(targetOffsetX = { it / 2 }) }
+      ) {
+        composable(CampusTab.FEED.route) {
+          HomeScreen(
+            viewModel = viewModel,
+            onProfileClick = { navController.navigate(CampusTab.PROFILE.route) },
+            onStartChat = { email ->
+              viewModel.startNewChat(email) { chatId ->
+                navController.navigate("chat/$chatId")
+              }
+            }
+          )
         }
-      ) { targetTab ->
-        when (targetTab) {
-          CampusTab.FEED -> HomeScreen(
+        composable(CampusTab.ASSIGNMENTS.route) {
+          AssignmentScreen(viewModel = viewModel)
+        }
+        composable(CampusTab.MARKETPLACE.route) {
+          MarketplaceScreen(viewModel = viewModel)
+        }
+        composable(CampusTab.GIGS.route) {
+          GigScreen(
             viewModel = viewModel,
-            modifier = modifier,
-            onProfileClick = { currentTab = CampusTab.PROFILE }
+            onStartChat = { email ->
+              viewModel.startNewChat(email) { chatId ->
+                navController.navigate("chat/$chatId")
+              }
+            }
           )
-          CampusTab.ASSIGNMENTS -> AssignmentScreen(viewModel = viewModel, modifier = modifier)
-          CampusTab.MARKETPLACE -> MarketplaceScreen(viewModel = viewModel, modifier = modifier)
-          CampusTab.GIGS -> GigScreen(viewModel = viewModel, modifier = modifier)
-          CampusTab.PROFILE -> ProfileScreen(
-            viewModel = viewModel,
-            onEditClick = { currentTab = CampusTab.EDIT_PROFILE },
-            modifier = modifier
-          )
-          CampusTab.EDIT_PROFILE -> EditProfileScreen(
-            viewModel = viewModel,
-            onBack = { currentTab = CampusTab.PROFILE },
-            modifier = modifier
-          )
-          CampusTab.COLLEGE_SEARCH -> CollegeSearchScreen(
+        }
+        composable(CampusTab.PROFILE.route) {
+          ProfileScreen(viewModel = viewModel, onEditClick = { navController.navigate(CampusTab.EDIT_PROFILE.route) })
+        }
+        composable(CampusTab.EDIT_PROFILE.route) {
+          EditProfileScreen(viewModel = viewModel, onBack = { navController.popBackStack() })
+        }
+        composable(CampusTab.COLLEGE_SEARCH.route) {
+          CollegeSearchScreen(
             viewModel = viewModel,
             onCollegeSelect = { name ->
-              selectedCollegeName = name
-              currentTab = CampusTab.COLLEGE_HUB
-            },
-            modifier = modifier
+              navController.navigate(CampusTab.COLLEGE_HUB.route.replace("{collegeName}", name))
+            }
           )
-          CampusTab.COLLEGE_HUB -> CollegeHubScreen(
-            viewModel = viewModel,
-            collegeName = selectedCollegeName,
-            onBack = { currentTab = CampusTab.COLLEGE_SEARCH },
-            modifier = modifier
-          )
+        }
+        composable(CampusTab.COLLEGE_HUB.route, arguments = listOf(navArgument("collegeName") { type = NavType.StringType })) { backStackEntry ->
+          val collegeName = backStackEntry.arguments?.getString("collegeName") ?: ""
+          CollegeHubScreen(viewModel = viewModel, collegeName = collegeName, onBack = { navController.popBackStack() })
+        }
+        composable(CampusTab.MESSAGES.route) {
+          MessageInboxScreen(viewModel = viewModel, onChatClick = { chatId ->
+            navController.navigate("chat/$chatId")
+          })
+        }
+        composable(CampusTab.CHAT.route, arguments = listOf(navArgument("chatId") { type = NavType.IntType })) { backStackEntry ->
+          val chatId = backStackEntry.arguments?.getInt("chatId") ?: -1
+          ChatScreen(viewModel = viewModel, chatId = chatId, onBack = { navController.popBackStack() })
         }
       }
     }
   }
 }
+
+private fun String.capitalize() = replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }

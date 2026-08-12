@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Campaign
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Send
@@ -65,6 +66,7 @@ import com.example.data.model.FriendSuggestion
 import com.example.data.model.HomeFeedItem
 import com.example.ui.CampusViewModel
 import com.example.ui.components.FriendSuggestionCarousel
+import com.example.ui.components.GlassCard
 import com.example.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -75,7 +77,8 @@ import java.util.Locale
 fun HomeScreen(
     viewModel: CampusViewModel,
     modifier: Modifier = Modifier,
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    onStartChat: (String) -> Unit = {}
 ) {
     val user by viewModel.currentUser.collectAsState()
     val posts by viewModel.feedPosts.collectAsState()
@@ -167,19 +170,15 @@ fun HomeScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Write Post Section - Bento Styled Lavender Box
-            Card(
+            // Write Post Section - Glass Styled
+            GlassCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = BentoLavenderContainer),
-                elevation = CardDefaults.cardElevation(0.dp)
+                cornerRadius = 24.dp
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     if (!isPostingBoxExpanded) {
                         Row(
@@ -331,7 +330,8 @@ fun HomeScreen(
                                     PostItem(
                                         post = item.post,
                                         currentUserEmail = user?.email ?: "",
-                                        onLikeToggle = { viewModel.toggleLikePost(item.post) }
+                                        onLikeToggle = { viewModel.toggleLikePost(item.post) },
+                                        onMessageClick = { onStartChat(item.post.authorEmail) }
                                     )
                                 }
                             }
@@ -359,23 +359,19 @@ fun HomeScreen(
 fun PostItem(
     post: FeedPost,
     currentUserEmail: String,
-    onLikeToggle: () -> Unit
+    onLikeToggle: () -> Unit,
+    onMessageClick: () -> Unit
 ) {
     val hasLiked = post.likedByEmails.split(",").map { it.trim() }.contains(currentUserEmail)
 
-    Card(
+    GlassCard(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, BentoBorder.copy(alpha = 0.5f), RoundedCornerShape(24.dp))
             .testTag("post_item_${post.id}"),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(0.dp)
+        cornerRadius = 24.dp
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -454,11 +450,23 @@ fun PostItem(
                     )
                 }
                 Text(
-                    text = "${post.likesCount} student likes",
+                    text = "${post.likesCount}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = if (hasLiked) BentoLavenderContent else BentoTextSecondary,
                     fontWeight = if (hasLiked) FontWeight.Bold else FontWeight.Normal
                 )
+                
+                if (post.authorEmail != currentUserEmail) {
+                    Spacer(modifier = Modifier.width(16.dp))
+                    IconButton(onClick = onMessageClick) {
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = "Message",
+                            tint = BentoLavenderContent,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
             }
         }
     }

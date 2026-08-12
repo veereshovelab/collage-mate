@@ -69,13 +69,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.data.model.Gig
 import com.example.ui.CampusViewModel
+import com.example.ui.components.GlassCard
 import com.example.ui.theme.*
+import androidx.compose.material.icons.filled.Email
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GigScreen(
     viewModel: CampusViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onStartChat: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val user by viewModel.currentUser.collectAsState()
@@ -240,7 +243,8 @@ fun GigScreen(
                             onCancel = {
                                 viewModel.cancelGig(gig)
                                 Toast.makeText(context, "Gig cancelled and points refunded successfully.", Toast.LENGTH_SHORT).show()
-                            }
+                            },
+                            onMessageClick = { onStartChat(gig.requesterEmail) }
                         )
                     }
                 }
@@ -268,7 +272,8 @@ fun GigCardItem(
     currentUserEmail: String,
     onAccept: () -> Unit,
     onComplete: () -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
+    onMessageClick: () -> Unit
 ) {
     val isMyGig = gig.requesterEmail == currentUserEmail
     val isHelperMe = gig.helperEmail == currentUserEmail
@@ -280,19 +285,14 @@ fun GigCardItem(
         else -> Icons.Default.Lightbulb
     }
 
-    Card(
+    GlassCard(
         modifier = Modifier
             .fillMaxWidth()
-            .border(1.dp, BentoBorder.copy(alpha = 0.5f), RoundedCornerShape(24.dp))
             .testTag("gig_card_${gig.id}"),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(24.dp),
-        elevation = CardDefaults.cardElevation(0.dp)
+        cornerRadius = 24.dp
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(18.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -315,11 +315,24 @@ fun GigCardItem(
                             style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                             color = BentoTextMain
                         )
-                        Text(
-                            text = "By ${gig.requesterName} • ${gig.category}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = BentoTextSecondary
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "By ${gig.requesterName} • ${gig.category}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = BentoTextSecondary
+                            )
+                            if (!isMyGig) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Icon(
+                                    Icons.Default.Email,
+                                    contentDescription = "Message",
+                                    tint = BentoLavenderContent,
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .clickable { onMessageClick() }
+                                )
+                            }
+                        }
                     }
                 }
 

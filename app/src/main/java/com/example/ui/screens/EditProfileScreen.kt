@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.ui.CampusViewModel
+import com.example.ui.components.GlassCard
 import com.example.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -151,15 +152,12 @@ fun EditProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Appearance Section
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, BentoBorder.copy(alpha = 0.5f), RoundedCornerShape(24.dp)),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
+            // Appearance Section - Glass Style
+            GlassCard(
+                modifier = Modifier.fillMaxWidth(),
+                cornerRadius = 24.dp
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Appearance",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -187,15 +185,13 @@ fun EditProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Read-only Login Info
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, BentoBorder.copy(alpha = 0.3f), RoundedCornerShape(24.dp)),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = BentoBackground.copy(alpha = 0.5f))
+            // Read-only Login Info - Glass style
+            GlassCard(
+                modifier = Modifier.fillMaxWidth(),
+                cornerRadius = 24.dp,
+                blurRadius = 8.dp
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Login Info (Read-only)",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),

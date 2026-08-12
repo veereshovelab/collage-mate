@@ -16,7 +16,26 @@ data class User(
     val appearance: String = "System",
     val collegeCourse: String = "",
     val phoneNumber: String = "",
-    val socialLink: String = ""
+    val socialLink: String = "",
+    val role: String = "Student" // roles: Student, Faculty, Admin
+)
+
+@Entity(tableName = "direct_messages")
+data class DirectMessage(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val participant1Email: String,
+    val participant2Email: String,
+    val lastMessage: String = "",
+    val lastMessageTimestamp: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "chat_messages")
+data class ChatMessage(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val chatId: Int,
+    val senderEmail: String,
+    val content: String,
+    val timestamp: Long = System.currentTimeMillis()
 )
 
 @Entity(tableName = "resource_materials")

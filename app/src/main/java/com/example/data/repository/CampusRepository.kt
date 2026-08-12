@@ -4,18 +4,39 @@ import com.example.data.db.UserDao
 import com.example.data.db.ResourceDao
 import com.example.data.db.GigDao
 import com.example.data.db.PostDao
+import com.example.data.db.MessageDao
 import com.example.data.model.User
 import com.example.data.model.ResourceMaterial
 import com.example.data.model.Gig
 import com.example.data.model.FeedPost
+import com.example.data.model.DirectMessage
+import com.example.data.model.ChatMessage
 import kotlinx.coroutines.flow.Flow
 
 class CampusRepository(
     private val userDao: UserDao,
     private val resourceDao: ResourceDao,
     private val gigDao: GigDao,
-    private val postDao: PostDao
+    private val postDao: PostDao,
+    private val messageDao: MessageDao
 ) {
+    // Messaging
+    fun getDirectMessagesForUser(email: String) = messageDao.getDirectMessagesForUser(email)
+
+    suspend fun createOrGetDirectMessage(myEmail: String, theirEmail: String): Int {
+        // Simple mock: in a real app, check if exists first
+        val newDm = DirectMessage(participant1Email = myEmail, participant2Email = theirEmail)
+        return messageDao.insertDirectMessage(newDm).toInt()
+    }
+
+    fun getChatMessages(chatId: Int) = messageDao.getChatMessages(chatId)
+
+    suspend fun sendChatMessage(chatId: Int, senderEmail: String, content: String) {
+        val timestamp = System.currentTimeMillis()
+        messageDao.insertChatMessage(ChatMessage(chatId = chatId, senderEmail = senderEmail, content = content, timestamp = timestamp))
+        messageDao.updateLastMessage(chatId, content, timestamp)
+    }
+
     fun getUserByEmail(email: String): Flow<User?> = userDao.getUserByEmail(email)
 
     suspend fun getUserByEmailSync(email: String): User? = userDao.getUserByEmailSync(email)

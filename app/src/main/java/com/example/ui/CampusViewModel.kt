@@ -8,6 +8,8 @@ import com.example.data.model.User
 import com.example.data.model.ResourceMaterial
 import com.example.data.model.Gig
 import com.example.data.model.FeedPost
+import com.example.data.model.DirectMessage
+import com.example.data.model.ChatMessage
 import com.example.data.repository.CampusRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,12 +23,19 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
         db.userDao(),
         db.resourceDao(),
         db.gigDao(),
-        db.postDao()
+        db.postDao(),
+        db.messageDao()
     )
 
     // States
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
+
+    private val _directMessages = MutableStateFlow<List<DirectMessage>>(emptyList())
+    val directMessages: StateFlow<List<DirectMessage>> = _directMessages.asStateFlow()
+
+    private val _currentChatMessages = MutableStateFlow<List<ChatMessage>>(emptyList())
+    val currentChatMessages: StateFlow<List<ChatMessage>> = _currentChatMessages.asStateFlow()
 
     private val _resources = MutableStateFlow<List<ResourceMaterial>>(emptyList())
     val resources: StateFlow<List<ResourceMaterial>> = _resources.asStateFlow()
@@ -325,6 +334,39 @@ class CampusViewModel(application: Application) : AndroidViewModel(application) 
             repository.getPostsForCollege(collegeName).collect { posts ->
                 _feedPosts.value = posts
             }
+        }
+    }
+
+    // Messaging actions
+    fun loadDirectMessages() {
+        val user = _currentUser.value ?: return
+        viewModelScope.launch {
+            repository.getDirectMessagesForUser(user.email).collect { list ->
+                _directMessages.value = list
+            }
+        }
+    }
+
+    fun loadChatMessages(chatId: Int) {
+        viewModelScope.launch {
+            repository.getChatMessages(chatId).collect { list ->
+                _currentChatMessages.value = list
+            }
+        }
+    }
+
+    fun sendMessage(chatId: Int, content: String) {
+        val user = _currentUser.value ?: return
+        viewModelScope.launch {
+            repository.sendChatMessage(chatId, user.email, content)
+        }
+    }
+
+    fun startNewChat(theirEmail: String, onResult: (Int) -> Unit) {
+        val user = _currentUser.value ?: return
+        viewModelScope.launch {
+            val chatId = repository.createOrGetDirectMessage(user.email, theirEmail)
+            onResult(chatId)
         }
     }
 

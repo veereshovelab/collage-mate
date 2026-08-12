@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.CampusViewModel
+import com.example.ui.components.GlassCard
 import com.example.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,19 +105,14 @@ fun CollegeSearchScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(filteredColleges) { collegeName ->
-                    Card(
+                    GlassCard(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { onCollegeSelect(collegeName) }
-                            .border(1.dp, BentoBorder.copy(alpha = 0.5f), RoundedCornerShape(20.dp)),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        elevation = CardDefaults.cardElevation(0.dp)
+                            .clickable { onCollegeSelect(collegeName) },
+                        cornerRadius = 20.dp
                     ) {
                         Row(
-                            modifier = Modifier
-                                .padding(20.dp)
-                                .fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {

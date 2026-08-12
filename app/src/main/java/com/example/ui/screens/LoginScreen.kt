@@ -64,6 +64,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.CampusViewModel
+import com.example.ui.components.CampusLogo
+import com.example.ui.components.GlassCard
 import com.example.ui.theme.*
 
 @Composable
@@ -113,8 +115,8 @@ fun LoginScreen(
             ) {
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // The Campus Gate Silhouette Custom Vector Canvas - Bento style
-                CampusGateSilhouette(modifier = Modifier.size(150.dp))
+                // App Logo
+                CampusLogo(modifier = Modifier.size(120.dp))
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -137,19 +139,14 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.height(28.dp))
 
-                Card(
+                GlassCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, BentoBorder.copy(alpha = 0.5f), RoundedCornerShape(24.dp))
                         .testTag("auth_card"),
-                    shape = RoundedCornerShape(24.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(0.dp)
+                    cornerRadius = 24.dp
                 ) {
                     Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -401,81 +398,5 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
-    }
-}
-
-@Composable
-fun CampusGateSilhouette(modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-
-        // Outer Arch
-        val outerArchPath = Path().apply {
-            moveTo(w * 0.15f, h * 0.95f)
-            lineTo(w * 0.15f, h * 0.45f)
-            cubicTo(
-                w * 0.15f, h * 0.1f,
-                w * 0.85f, h * 0.1f,
-                w * 0.85f, h * 0.45f
-            )
-            lineTo(w * 0.85f, h * 0.95f)
-        }
-
-        drawPath(
-            path = outerArchPath,
-            color = BentoLavenderContent.copy(alpha = 0.3f),
-            style = Stroke(width = 6.dp.toPx())
-        )
-
-        // Inner Arch Detail
-        val innerArchPath = Path().apply {
-            moveTo(w * 0.25f, h * 0.95f)
-            lineTo(w * 0.25f, h * 0.52f)
-            cubicTo(
-                w * 0.25f, h * 0.25f,
-                w * 0.75f, h * 0.25f,
-                w * 0.75f, h * 0.52f
-            )
-            lineTo(w * 0.75f, h * 0.95f)
-        }
-
-        drawPath(
-            path = innerArchPath,
-            color = BentoLilacContent.copy(alpha = 0.4f),
-            style = Stroke(width = 3.dp.toPx())
-        )
-
-        // Main gate pillars
-        drawRoundRect(
-            color = BentoLavenderContent,
-            topLeft = Offset(w * 0.12f, h * 0.85f),
-            size = Size(w * 0.08f, h * 0.12f),
-            cornerRadius = CornerRadius(2.dp.toPx())
-        )
-        drawRoundRect(
-            color = BentoLavenderContent,
-            topLeft = Offset(w * 0.8f, h * 0.85f),
-            size = Size(w * 0.08f, h * 0.12f),
-            cornerRadius = CornerRadius(2.dp.toPx())
-        )
-
-        // Golden Keystone Crest at the top center of the arch
-        drawCircle(
-            color = BentoLilacContent,
-            center = Offset(w * 0.5f, h * 0.27f),
-            radius = 10.dp.toPx()
-        )
-
-        // Glowing center
-        drawCircle(
-            brush = Brush.radialGradient(
-                colors = listOf(BentoLilacContent.copy(alpha = 0.3f), Color.Transparent),
-                center = Offset(w * 0.5f, h * 0.6f),
-                radius = w * 0.25f
-            ),
-            center = Offset(w * 0.5f, h * 0.6f),
-            radius = w * 0.25f
-        )
     }
 }
