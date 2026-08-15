@@ -113,7 +113,7 @@ fun HomeScreen(
                 title = {
                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
                         Text(
-                            text = "ClgMate",
+                            text = "Campusdeck",
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold, letterSpacing = (-0.5).sp),
                             color = BentoTextMain
                         )

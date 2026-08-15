@@ -16,6 +16,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "ClgMate"
+rootProject.name = "Campusdeck"
 
 include(":app")

@@ -119,7 +119,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "ClgMate",
+                    text = "Campusdeck",
                     style = MaterialTheme.typography.displayMedium.copy(
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = (-1.5).sp
@@ -153,7 +153,7 @@ fun LoginScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = if (isRegistering) "Create Student Account" else "Unlock ClgMate Gates",
+                            text = if (isRegistering) "Create Student Account" else "Unlock Campusdeck Gates",
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold, letterSpacing = (-0.5).sp),
                             color = BentoTextMain,
                             modifier = Modifier.fillMaxWidth(),
