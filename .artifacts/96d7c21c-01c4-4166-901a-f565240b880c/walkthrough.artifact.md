@@ -28,3 +28,10 @@ I have injected a horizontally scrollable "Friend Suggestion" carousel into the 
 - **Build**: Successfully compiled the new data models and UI components.
 - **Preview**: Verified the carousel layout and card styling using Compose Preview.
 - **Responsiveness**: The carousel scrolls horizontally without interrupting the vertical scroll of the main feed.
+
+## Phase 3: Functional Search Bar
+I have made the search bar fully interactive with the following improvements:
+- **Focus Management**: The search bar now correctly gains focus and triggers the on-screen keyboard when tapped.
+- **Clear Icon**: Added a trailing "X" icon that appears only when the user starts typing, providing a quick way to clear the input.
+- **IME Action**: Changed the keyboard's action button to a "Search" icon.
+- **Keyboard Actions**: Configured the search bar to clear focus (and potentially trigger search logic) when the user presses the "Search" key on the keyboard.
